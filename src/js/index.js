@@ -5,6 +5,7 @@ const rootElement = document.getElementById('root');
 const jsonDomTree = {
     type: 'div',
     props: {
+        onClick: () => alert('Clicked'),
         className: 'container',
         children: [
             {

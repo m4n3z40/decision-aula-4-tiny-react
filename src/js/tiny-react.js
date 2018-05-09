@@ -16,7 +16,7 @@ export function render(element, parent) {
     Object.keys(props)
         .filter(isListenerPropName)
         .forEach(propName => {
-            const eventType = name.toLowerCase().substring(2);
+            const eventType = propName.toLowerCase().substring(2);
 
             dom.addEventListener(eventType, props[propName]);
         });
