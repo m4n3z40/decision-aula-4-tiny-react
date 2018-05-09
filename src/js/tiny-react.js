@@ -1,9 +1,17 @@
+const TEXT_NODE = Symbol('TEXT_NODE');
+const getElement = element =>
+    typeof element === 'string'
+        ? { type: TEXT_NODE, props: { nodeValue: element } }
+        : element;
+
 const isListenerPropName = propName => propName.startsWith('on');
 const isAttributePropName = propName => !isListenerPropName(propName) && propName !== 'children';
 
 export function render(element, parent) {
-    const { type, props } = element;
-    const dom = document.createElement(type);
+    const { type, props } = getElement(element);
+    const dom = type === TEXT_NODE
+        ? document.createTextNode('')
+        : document.createElement(type);
 
     Object.keys(props)
         .filter(isListenerPropName)

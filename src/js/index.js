@@ -10,7 +10,8 @@ const jsonDomTree = {
             {
                 type: 'h1',
                 props: {
-                    className: 'main-title'
+                    className: 'main-title',
+                    children: ['This is a title']
                 }
             },
             {
@@ -21,7 +22,8 @@ const jsonDomTree = {
                         {
                             type: 'p',
                             props: {
-                                id: 'paragraph-one'
+                                id: 'paragraph-one',
+                                children: ['This is some paragraph text']
                             }
                         }
                     ]
