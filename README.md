@@ -1,2 +1,2 @@
-# decision-aula-4-tiny-react
+# Aula 4 - Tiny React
 Versão mínima do React

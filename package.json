@@ -1,0 +1,26 @@
+{
+  "name": "aula-4-tiny-react",
+  "version": "1.0.0",
+  "description": "Versão mínima do React",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m4n3z40/decision-aula-4-tiny-react.git"
+  },
+  "keywords": [],
+  "author": "Allan Baptista <allan.marques@ymail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/m4n3z40/decision-aula-4-tiny-react/issues"
+  },
+  "homepage": "https://github.com/m4n3z40/decision-aula-4-tiny-react#readme",
+  "dependencies": {
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "parcel-bundler": "^1.8.1"
+  }
+}
