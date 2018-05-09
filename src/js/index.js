@@ -5,18 +5,24 @@ const rootElement = document.getElementById('root');
 const jsonDomTree = {
     type: 'div',
     props: {
+        className: 'container',
         children: [
             {
                 type: 'h1',
-                props: {}
+                props: {
+                    className: 'main-title'
+                }
             },
             {
                 type: 'div',
                 props: {
+                    className: 'main-article',
                     children: [
                         {
                             type: 'p',
-                            props: {}
+                            props: {
+                                id: 'paragraph-one'
+                            }
                         }
                     ]
                 }
