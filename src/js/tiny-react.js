@@ -1,5 +1,21 @@
 const notEmpty = element => element !== undefined && element !== null && element !== false;
 
+const flatMap = (list, fn) => {
+    let newList = [];
+
+    for (const item of list) {
+        const newItem = fn(item);
+
+        if (Array.isArray(newList)) {
+            newList = newList.concat(newItem);
+        } else {
+            newList.push(item);
+        }
+    }
+
+    return newList;
+};
+
 const TEXT_NODE = Symbol('TEXT_NODE');
 
 const createTextNode = nodeValue => ({ type: TEXT_NODE, props: { nodeValue }});
@@ -8,9 +24,7 @@ const createNode = element => typeof element === 'string' ? createTextNode(eleme
 function createElement(type, attributes, ...children) {
     const props = Object.assign({}, attributes);
 
-    props.children = children
-        .filter(notEmpty)
-        .map(createNode);
+    props.children = flatMap(children.filter(notEmpty), createNode);
 
     return { type, props };
 }
