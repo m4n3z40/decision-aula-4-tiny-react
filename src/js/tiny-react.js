@@ -60,7 +60,7 @@ const updateDomProperties = (dom, prevProps, nextProps) => {
         });
 };
 
-const instantiate = element => {
+const instantiateDom = element => {
     const { type, props } = element;
     const dom = type === TEXT_NODE
         ? document.createTextNode('')
@@ -74,6 +74,21 @@ const instantiate = element => {
     childInstances.forEach(child => dom.appendChild(child.dom));
 
     return { dom, element, childInstances };
+};
+
+const instantiate = element => {
+    if (typeof element.type === 'function') {
+        const childElement = element.type(element.props);
+        const childInstance = instantiate(childElement);
+
+        return {
+            dom: childInstance.dom,
+            element,
+            childInstances: [childInstance],
+        };
+    }
+
+    return instantiateDom(element);
 };
 
 const reconcileChildren = ({ dom, childInstances }, { props }) => {
@@ -109,6 +124,15 @@ const reconcile = (parent, instance, element) => {
         parent.replaceChild(newInstance.dom, instance.dom);
 
         return newInstance;
+    } else if (typeof element.type === 'function') {
+        const childElement = element.type(element.props);
+        const [oldChildInstance] = instance.childInstances;
+        const childInstance = reconcile(parent, oldChildInstance, childElement);
+
+        instance.childInstances = [childInstance];
+        instance.element = element;
+
+        return instance;
     } else {
         updateDomProperties(instance.dom, instance.element.props, element.props);
 

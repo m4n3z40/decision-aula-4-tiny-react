@@ -12,24 +12,24 @@ const state = {
     ],
 };
 
-const renderApp = () => {
-    const App = (
-        <main className="container">
-            <h1 className="main-title">Cool Links</h1>
-            <ul>
-                {state.coolLinks.map(link => (
-                    <li>
-                        <button onClick={() => link.likes++} title="Likes">{`\u2764 ${link.likes}`}</button>
-                        {' '}
-                        <a href={link.url}>{link.title}</a>
-                    </li>
-                ))}
-            </ul>
-            <button onClick={() => state.coolLinks.pop()}>Remove last</button>
-        </main>
-    );
+const App = ({ className }) => (
+    <main className={className}>
+        <h1 className="main-title">Cool Links</h1>
+        <ul>
+            {state.coolLinks.map(link => (
+                <li>
+                    <button onClick={() => link.likes++} title="Likes">{`\u2764 ${link.likes}`}</button>
+                    {' '}
+                    <a href={link.url}>{link.title}</a>
+                </li>
+            ))}
+        </ul>
+        <button onClick={() => state.coolLinks.pop()}>Remove last</button>
+    </main>
+);
 
-    TinyReact.render(App, rootElement);
+const renderApp = () => {
+    TinyReact.render(<App className="container" />, rootElement);
 
     requestAnimationFrame(renderApp);
 };
