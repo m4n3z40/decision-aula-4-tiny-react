@@ -25,6 +25,7 @@ const renderApp = () => {
                     </li>
                 ))}
             </ul>
+            <button onClick={() => state.coolLinks.pop()}>Remove last</button>
         </main>
     );
 
