@@ -2,8 +2,8 @@ const notEmpty = element => element !== undefined && element !== null && element
 
 const TEXT_NODE = Symbol('TEXT_NODE');
 
-const createTextElement = nodeValue => ({ type: TEXT_NODE, props: { nodeValue }});
-const createNode = element => typeof element === 'string' ? createTextElement(element) : element;
+const createTextNode = nodeValue => ({ type: TEXT_NODE, props: { nodeValue }});
+const createNode = element => typeof element === 'string' ? createTextNode(element) : element;
 
 function createElement(type, attributes, ...children) {
     const props = Object.assign({}, attributes);
