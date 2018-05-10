@@ -31,8 +31,9 @@ function createElement(type, attributes, ...children) {
 
 const isListenerPropName = propName => propName.startsWith('on');
 const isAttributePropName = propName => !isListenerPropName(propName) && propName !== 'children';
+let rootInstance = null;
 
-function render(element, parent, root = false) {
+const instantiate = element => {
     const { type, props } = element;
     const dom = type === TEXT_NODE
         ? document.createTextNode('')
@@ -53,14 +54,31 @@ function render(element, parent, root = false) {
         });
 
     const childElements = props.children || [];
+    const childInstances = childElements.map(instantiate);
 
-    childElements.forEach(child => render(child, dom));
+    childInstances.forEach(child => dom.appendChild(child.dom));
 
-    if (!root || !parent.lastChild) {
-        parent.appendChild(dom);
+    return { dom, element, childInstances };
+};
+
+const reconcile = (parent, instance, element) => {
+    if (instance === null) {
+        const newInstance = instantiate(element);
+
+        parent.appendChild(newInstance.dom);
+
+        return newInstance;
     } else {
-        parent.replaceChild(dom, parent.lastChild);
+        const newInstance = instantiate(element);
+
+        parent.replaceChild(newInstance.dom, instance.dom);
+
+        return newInstance;
     }
+};
+
+function render(element, container) {
+    rootInstance = reconcile(container, rootInstance, element);
 }
 
 export default { createElement, render };

@@ -28,7 +28,7 @@ const renderApp = () => {
         </main>
     );
 
-    TinyReact.render(App, rootElement, true);
+    TinyReact.render(App, rootElement);
 };
 
 setInterval(renderApp, 500);
