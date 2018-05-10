@@ -1,14 +1,25 @@
+const notEmpty = element => element !== undefined && element !== null && element !== false;
+
 const TEXT_NODE = Symbol('TEXT_NODE');
-const getElement = element =>
-    typeof element === 'string'
-        ? { type: TEXT_NODE, props: { nodeValue: element } }
-        : element;
+
+const createTextElement = nodeValue => ({ type: TEXT_NODE, props: { nodeValue }});
+const createNode = element => typeof element === 'string' ? createTextElement(element) : element;
+
+export function createElement(type, attributes, ...children) {
+    const props = Object.assign({}, attributes);
+
+    props.children = children
+        .filter(notEmpty)
+        .map(createNode);
+
+    return { type, props };
+}
 
 const isListenerPropName = propName => propName.startsWith('on');
 const isAttributePropName = propName => !isListenerPropName(propName) && propName !== 'children';
 
 export function render(element, parent) {
-    const { type, props } = getElement(element);
+    const { type, props } = element;
     const dom = type === TEXT_NODE
         ? document.createTextNode('')
         : document.createElement(type);
