@@ -83,6 +83,12 @@ const reconcile = (parent, instance, element) => {
         parent.appendChild(newInstance.dom);
 
         return newInstance;
+    } else if (instance.element.type === element.type) {
+        updateDomProperties(instance.dom, instance.element.props, element.props);
+
+        instance.element = element;
+
+        return instance;
     } else {
         const newInstance = instantiate(element);
 
