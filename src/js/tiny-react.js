@@ -31,7 +31,34 @@ function createElement(type, attributes, ...children) {
 
 const isListenerPropName = propName => propName.startsWith('on');
 const isAttributePropName = propName => !isListenerPropName(propName) && propName !== 'children';
+const getEventType = propName => propName.toLowerCase().substring(2);
 let rootInstance = null;
+
+const updateDomProperties = (dom, prevProps, nextProps) => {
+    Object.keys(prevProps)
+        .filter(isListenerPropName)
+        .forEach(propName => {
+            dom.removeEventListener(getEventType(propName), prevProps[propName]);
+        });
+
+    Object.keys(prevProps)
+        .filter(isAttributePropName)
+        .forEach(propName => {
+            dom[propName] = null;
+        });
+
+    Object.keys(nextProps)
+        .filter(isListenerPropName)
+        .forEach(propName => {
+            dom.addEventListener(getEventType(propName), nextProps[propName]);
+        });
+
+    Object.keys(nextProps)
+        .filter(isAttributePropName)
+        .forEach(propName => {
+            dom[propName] = nextProps[propName];
+        });
+};
 
 const instantiate = element => {
     const { type, props } = element;
@@ -39,19 +66,7 @@ const instantiate = element => {
         ? document.createTextNode('')
         : document.createElement(type);
 
-    Object.keys(props)
-        .filter(isListenerPropName)
-        .forEach(propName => {
-            const eventType = propName.toLowerCase().substring(2);
-
-            dom.addEventListener(eventType, props[propName]);
-        });
-
-    Object.keys(props)
-        .filter(isAttributePropName)
-        .forEach(propName => {
-            dom[propName] = props[propName];
-        });
+    updateDomProperties(dom, [], props);
 
     const childElements = props.children || [];
     const childInstances = childElements.map(instantiate);
