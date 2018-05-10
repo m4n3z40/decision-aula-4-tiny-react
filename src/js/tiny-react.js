@@ -32,7 +32,7 @@ function createElement(type, attributes, ...children) {
 const isListenerPropName = propName => propName.startsWith('on');
 const isAttributePropName = propName => !isListenerPropName(propName) && propName !== 'children';
 
-function render(element, parent) {
+function render(element, parent, root = false) {
     const { type, props } = element;
     const dom = type === TEXT_NODE
         ? document.createTextNode('')
@@ -56,7 +56,11 @@ function render(element, parent) {
 
     childElements.forEach(child => render(child, dom));
 
-    parent.appendChild(dom);
+    if (!root || !parent.lastChild) {
+        parent.appendChild(dom);
+    } else {
+        parent.replaceChild(dom, parent.lastChild);
+    }
 }
 
 export default { createElement, render };

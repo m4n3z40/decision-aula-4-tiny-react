@@ -12,19 +12,23 @@ const state = {
     ],
 };
 
-const App = (
-    <main className="container">
-        <h1 className="main-title">Cool Links</h1>
-        <ul>
-            {state.coolLinks.map(link => (
-                <li>
-                    <button onClick={() => link.likes++} title="Likes">{`\u2764 ${link.likes}`}</button>
-                    {' '}
-                    <a href={link.url}>{link.title}</a>
-                </li>
-            ))}
-        </ul>
-    </main>
-);
+const renderApp = () => {
+    const App = (
+        <main className="container">
+            <h1 className="main-title">Cool Links</h1>
+            <ul>
+                {state.coolLinks.map(link => (
+                    <li>
+                        <button onClick={() => link.likes++} title="Likes">{`\u2764 ${link.likes}`}</button>
+                        {' '}
+                        <a href={link.url}>{link.title}</a>
+                    </li>
+                ))}
+            </ul>
+        </main>
+    );
 
-TinyReact.render(App, rootElement);
+    TinyReact.render(App, rootElement, true);
+};
+
+setInterval(renderApp, 500);
