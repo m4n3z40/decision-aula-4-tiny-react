@@ -5,7 +5,7 @@ const TEXT_NODE = Symbol('TEXT_NODE');
 const createTextElement = nodeValue => ({ type: TEXT_NODE, props: { nodeValue }});
 const createNode = element => typeof element === 'string' ? createTextElement(element) : element;
 
-export function createElement(type, attributes, ...children) {
+function createElement(type, attributes, ...children) {
     const props = Object.assign({}, attributes);
 
     props.children = children
@@ -18,7 +18,7 @@ export function createElement(type, attributes, ...children) {
 const isListenerPropName = propName => propName.startsWith('on');
 const isAttributePropName = propName => !isListenerPropName(propName) && propName !== 'children';
 
-export function render(element, parent) {
+function render(element, parent) {
     const { type, props } = element;
     const dom = type === TEXT_NODE
         ? document.createTextNode('')
@@ -44,3 +44,5 @@ export function render(element, parent) {
 
     parent.appendChild(dom);
 }
+
+export default { createElement, render };

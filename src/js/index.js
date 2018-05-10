@@ -1,10 +1,8 @@
-/* @jsx createElement */
-
-import { createElement, render } from './tiny-react';
+import TinyReact from './tiny-react';
 
 const rootElement = document.getElementById('root');
 
-const jsonDomTree = (
+const App = (
     <div className="container" onClick={() => alert('Clicked')}>
         <h1 className="main-title">This is a title</h1>
         <div className="main-article">
@@ -13,4 +11,4 @@ const jsonDomTree = (
     </div>
 );
 
-render(jsonDomTree, rootElement);
+TinyReact.render(App, rootElement);
