@@ -76,6 +76,22 @@ const instantiate = element => {
     return { dom, element, childInstances };
 };
 
+const reconcileChildren = ({ dom, childInstances }, { props }) => {
+    const nextChildElements = props.children || [];
+    const newChildInstances = [];
+    const count = Math.max(childInstances.length, nextChildElements.length);
+
+    for (let i = 0; i < count; i++) {
+        const childInstance = childInstances[i];
+        const childElement = nextChildElements[i];
+        const newChildInstance = reconcile(dom, childInstance, childElement);
+
+        newChildInstances.push(newChildInstance);
+    }
+
+    return newChildInstances;
+};
+
 const reconcile = (parent, instance, element) => {
     if (instance === null) {
         const newInstance = instantiate(element);
@@ -86,6 +102,7 @@ const reconcile = (parent, instance, element) => {
     } else if (instance.element.type === element.type) {
         updateDomProperties(instance.dom, instance.element.props, element.props);
 
+        instance.childInstances = reconcileChildren(instance, element);
         instance.element = element;
 
         return instance;

@@ -29,6 +29,8 @@ const renderApp = () => {
     );
 
     TinyReact.render(App, rootElement);
+
+    requestAnimationFrame(renderApp);
 };
 
-setInterval(renderApp, 500);
+renderApp();
