@@ -31,30 +31,35 @@ function createElement(type, attributes, ...children) {
 
 const isListenerPropName = propName => propName.startsWith('on');
 const isAttributePropName = propName => !isListenerPropName(propName) && propName !== 'children';
+const isDifferentProp = (props, otherProps) => propName => props[propName] !== otherProps[propName];
 const getEventType = propName => propName.toLowerCase().substring(2);
 let rootInstance = null;
 
 const updateDomProperties = (dom, prevProps, nextProps) => {
     Object.keys(prevProps)
         .filter(isListenerPropName)
+        .filter(isDifferentProp(prevProps, nextProps))
         .forEach(propName => {
             dom.removeEventListener(getEventType(propName), prevProps[propName]);
         });
 
     Object.keys(prevProps)
         .filter(isAttributePropName)
+        .filter(isDifferentProp(prevProps, nextProps))
         .forEach(propName => {
             dom[propName] = null;
         });
 
     Object.keys(nextProps)
         .filter(isListenerPropName)
+        .filter(isDifferentProp(nextProps, prevProps))
         .forEach(propName => {
             dom.addEventListener(getEventType(propName), nextProps[propName]);
         });
 
     Object.keys(nextProps)
         .filter(isAttributePropName)
+        .filter(isDifferentProp(nextProps, prevProps))
         .forEach(propName => {
             dom[propName] = nextProps[propName];
         });
