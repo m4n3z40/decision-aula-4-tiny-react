@@ -1,5 +1,15 @@
 import TinyReact from './tiny-react';
 
+const fetchLinks = () => new Promise(resolve => {
+    setTimeout(() => resolve([
+        { url: 'https://reactjs.org/', title: 'React JS', likes: 0 },
+        { url: 'https://redux.js.org/', title: 'Redux', likes: 0 },
+        { url: 'https://babeljs.io/', title: 'Babel JS', likes: 0 },
+        { url: 'https://reacttraining.com/react-router/', title: 'React Router', likes: 0 },
+        { url: 'https://github.com/', title: 'Github', likes: 0 },
+    ]), 2000);
+});
+
 const rootElement = document.getElementById('root');
 
 const LinkList = ({ links, onLinkClick }) => (
@@ -21,14 +31,14 @@ class App extends TinyReact.Component {
         super(props);
 
         this.state = {
-            coolLinks: [
-                { url: 'https://reactjs.org/', title: 'React JS', likes: 0 },
-                { url: 'https://redux.js.org/', title: 'Redux', likes: 0 },
-                { url: 'https://babeljs.io/', title: 'Babel JS', likes: 0 },
-                { url: 'https://reacttraining.com/react-router/', title: 'React Router', likes: 0 },
-                { url: 'https://github.com/', title: 'Github', likes: 0 },
-            ],
+            coolLinks: [],
         };
+    }
+
+    componentDidMount() {
+        fetchLinks().then(coolLinks => {
+            this.setState({ coolLinks });
+        });
     }
 
     handleLikeClick(link) {
@@ -55,7 +65,11 @@ class App extends TinyReact.Component {
         return (
             <main className={className}>
                 <h1 className="main-title">Cool Links</h1>
-                <LinkList links={coolLinks} onLinkClick={this.handleLikeClick.bind(this)} />
+                {
+                    coolLinks.length === 0
+                        ? <h3>Loading...</h3>
+                        : <LinkList links={coolLinks} onLinkClick={this.handleLikeClick.bind(this)} />
+                }
                 <button onClick={this.handleRemoveLastClick.bind(this)}>
                     Remove last
                 </button>

@@ -4,13 +4,7 @@ const flatMap = (list, fn) => {
     let newList = [];
 
     for (const item of list) {
-        const newItem = fn(item);
-
-        if (Array.isArray(newList)) {
-            newList = newList.concat(newItem);
-        } else {
-            newList.push(item);
-        }
+        newList = newList.concat(fn(item));
     }
 
     return newList;
@@ -95,6 +89,16 @@ class Component {
 
         updateInstance(this);
     }
+
+    componentDidMount() {}
+
+    shouldComponentUpdate(nextProps) {
+        return true;
+    }
+
+    componentDidUpdate(prevProps) {}
+
+    componentWillUnmount() {}
 }
 
 const instantiateCustom = element => {
@@ -166,22 +170,43 @@ const reconcile = (parent, instance, element) => {
 
         parent.appendChild(newInstance.dom);
 
+        if (newInstance.publicInstance) {
+            newInstance.publicInstance.componentDidMount();
+        }
+
         return newInstance;
     } else if(element === null || element === undefined || element === false) {
+        if (instance.publicInstance) {
+            instance.publicInstance.componentWillUnmount();
+        }
+
         parent.removeChild(instance.dom);
 
         return null;
     } else if (instance.element.type !== element.type) {
         const newInstance = instantiate(element);
 
+        if (instance.publicInstance) {
+            instance.publicInstance.componentWillUnmount();
+        }
+
         parent.replaceChild(newInstance.dom, instance.dom);
+
+        if (newInstance.publicInstance) {
+            newInstance.publicInstance.componentDidMount();
+        }
 
         return newInstance;
     } else if (typeof element.type === 'function') {
         let childElement;
+        let shouldUpdate = true;
+        let oldProps;
 
         if (instance.publicInstance) {
+            oldProps = instance.publicInstance.props;
             instance.publicInstance.props = element.props;
+
+            instance.publicInstance.shouldComponentUpdate(element.props);
 
             childElement = instance.publicInstance.render();
         } else {
@@ -189,7 +214,13 @@ const reconcile = (parent, instance, element) => {
         }
 
         const [oldChildInstance] = instance.childInstances;
-        const childInstance = reconcile(parent, oldChildInstance, childElement);
+        const childInstance = shouldUpdate
+            ? reconcile(parent, oldChildInstance, childElement)
+            : oldChildInstance;
+
+        if (instance.publicInstance && shouldUpdate) {
+            instance.publicInstance.componentDidUpdate(oldProps);
+        }
 
         instance.dom = childInstance.dom;
         instance.childInstances = [childInstance];
