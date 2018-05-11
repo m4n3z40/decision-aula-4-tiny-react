@@ -2,6 +2,20 @@ import TinyReact from './tiny-react';
 
 const rootElement = document.getElementById('root');
 
+const LinkList = ({ links, onLinkClick }) => (
+    <ul>
+        {links.map(link => (
+            <li>
+                <button onClick={() => onLinkClick(link)} title="Likes">
+                    {`\u2764 ${link.likes}`}
+                </button>
+                {' '}
+                <a href={link.url}>{link.title}</a>
+            </li>
+        ))}
+    </ul>
+);
+
 class App extends TinyReact.Component {
     constructor(props) {
         super(props);
@@ -41,18 +55,8 @@ class App extends TinyReact.Component {
         return (
             <main className={className}>
                 <h1 className="main-title">Cool Links</h1>
-                <ul>
-                    {coolLinks.map(link => (
-                        <li>
-                            <button onClick={() => this.handleLikeClick(link)} title="Likes">
-                                {`\u2764 ${link.likes}`}
-                            </button>
-                            {' '}
-                            <a href={link.url}>{link.title}</a>
-                        </li>
-                    ))}
-                </ul>
-                <button onClick={() => this.handleRemoveLastClick()}>
+                <LinkList links={coolLinks} onLinkClick={this.handleLikeClick.bind(this)} />
+                <button onClick={this.handleRemoveLastClick.bind(this)}>
                     Remove last
                 </button>
             </main>
