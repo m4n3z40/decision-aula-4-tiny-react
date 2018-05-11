@@ -1,4 +1,6 @@
-import TinyReact from './tiny-react';
+// import TinyReact from './tiny-react';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
 
 const fetchLinks = () => new Promise(resolve => {
     setTimeout(() => resolve([
@@ -15,7 +17,7 @@ const rootElement = document.getElementById('root');
 const LinkList = ({ links, onLinkClick }) => (
     <ul>
         {links.map(link => (
-            <li>
+            <li key={link.url}>
                 <button onClick={() => onLinkClick(link)} title="Likes">
                     {`\u2764 ${link.likes}`}
                 </button>
@@ -26,7 +28,7 @@ const LinkList = ({ links, onLinkClick }) => (
     </ul>
 );
 
-class App extends TinyReact.Component {
+class App extends Component {
     constructor(props) {
         super(props);
 
@@ -78,4 +80,4 @@ class App extends TinyReact.Component {
     }
 }
 
-TinyReact.render(<App className="container" />, rootElement);
+render(<App className="container" />, rootElement);

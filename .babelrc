@@ -1,5 +1,3 @@
 {
-  "plugins": [
-    ["transform-react-jsx", {"pragma": "TinyReact.createElement"}]
-  ]
+  "plugins": ["transform-react-jsx"]
 }
