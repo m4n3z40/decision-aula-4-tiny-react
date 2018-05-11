@@ -60,6 +60,61 @@ const updateDomProperties = (dom, prevProps, nextProps) => {
         });
 };
 
+const INTERNAL_INSTANCE = Symbol('INTERNAL_INSTANCE');
+
+const createPublicInstance = (element, internalInstance) => {
+    const { type: Type, props } = element;
+    const publicInstance = new Type(props);
+
+    publicInstance[INTERNAL_INSTANCE] = internalInstance;
+
+    return publicInstance;
+};
+
+const updateInstance = instance => {
+    const internalInstance = instance[INTERNAL_INSTANCE];
+    const parent = internalInstance.dom.parentNode;
+    const element = internalInstance.element;
+
+    reconcile(parent, internalInstance, element);
+};
+
+class Component {
+    constructor(props) {
+        this.props = props;
+        this.state = this.state || {};
+    }
+
+    setState(partialState) {
+        this.state = Object.assign({}, this.state, partialState);
+
+        updateInstance(this);
+    }
+}
+
+const instantiateCustom = element => {
+    let childElement;
+    let publicInstance;
+    const instance = {};
+
+    if (element.type.prototype instanceof Component) {
+        publicInstance = createPublicInstance(element, instance);
+
+        childElement = publicInstance.render();
+    } else {
+        childElement = element.type(element.props);
+    }
+
+    const childInstance = instantiate(childElement);
+
+    return Object.assign(instance, {
+        dom: childInstance.dom,
+        element,
+        childInstances: [childInstance],
+        publicInstance,
+    });
+};
+
 const instantiateDom = element => {
     const { type, props } = element;
     const dom = type === TEXT_NODE
@@ -78,17 +133,10 @@ const instantiateDom = element => {
 
 const instantiate = element => {
     if (typeof element.type === 'function') {
-        const childElement = element.type(element.props);
-        const childInstance = instantiate(childElement);
-
-        return {
-            dom: childInstance.dom,
-            element,
-            childInstances: [childInstance],
-        };
+        return instantiateCustom(element);
+    } else {
+        return instantiateDom(element);
     }
-
-    return instantiateDom(element);
 };
 
 const reconcileChildren = ({ dom, childInstances }, { props }) => {
@@ -125,10 +173,20 @@ const reconcile = (parent, instance, element) => {
 
         return newInstance;
     } else if (typeof element.type === 'function') {
-        const childElement = element.type(element.props);
+        let childElement;
+
+        if (instance.publicInstance) {
+            instance.publicInstance.props = element.props;
+
+            childElement = instance.publicInstance.render();
+        } else {
+            childElement = element.type(element.props);
+        }
+
         const [oldChildInstance] = instance.childInstances;
         const childInstance = reconcile(parent, oldChildInstance, childElement);
 
+        instance.dom = childInstance.dom;
         instance.childInstances = [childInstance];
         instance.element = element;
 
@@ -147,4 +205,4 @@ function render(element, container) {
     rootInstance = reconcile(container, rootInstance, element);
 }
 
-export default { createElement, render };
+export default { createElement, Component, render };
